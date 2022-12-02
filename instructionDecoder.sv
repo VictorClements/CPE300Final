@@ -8,7 +8,7 @@ module instructionDecoder(input  logic [7:0]  instr,
 
   always_comb
     casez({en, instr[3:0]})
-      5'b0????: decoded = 16'b0;
+      5'b0????: decoded = 16'b0000_0000_0000_0001; // same as NOP
 
       5'b10000: decoded = 16'b0000_0000_0000_0001;
       5'b10001: decoded = 16'b0000_0000_0000_0010;
@@ -30,14 +30,7 @@ module instructionDecoder(input  logic [7:0]  instr,
       5'b11110: decoded = 16'b0100_0000_0000_0000;
       5'b11111: decoded = 16'b1000_0000_0000_0000;
 
-      default:  decoded = 16'b0;
+      default:  decoded = 16'b0000_0000_0000_0001; //same as NOP
     endcase
 
 endmodule
-
-/*
-output logic       INOP, ILDAC, ISTAC, IMVAC,
-output logic       IMOVR, IJUMP, IJMPZ, IJPNZ,
-output logic       IADD, ISUB, IINAC, ICLAC,
-output logic       IAND, IOR, IXOR, INOT
-*/
