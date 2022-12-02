@@ -1,0 +1,22 @@
+01    //0x0000: LDAC  
+00    //0x0001: 0x00
+14    //0x0002: 0x14
+0B    //0x0003: CLAC  
+06    //0x0004: JMPZ  
+00    //0x0005: 0x00
+0A    //0x0006: 0x0A
+05    //0x0007: JUMP   
+00    //0x0008: 0x00
+00    //0x0009: 0x00
+0A    //0x000A: INAC 
+03    //0x000B: MVAC 
+08    //0x000C: ADD 
+02    //0x000D: STAC  
+00    //0x000E: 0x00
+15    //0x000F: 0x15
+00    //0x0010: //nothing here
+00    //0x0011: //nothing here
+00    //0x0012: //nothing here
+00    //0x0013: //nothing here
+55    //0x0014: 55   
+00    //0x0015: //will assume data is 00 initially, but will change to 2 (29?) later
