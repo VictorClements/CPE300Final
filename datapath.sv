@@ -1,7 +1,8 @@
 module datapath(input  logic        clk, reset, // input clock and reset signals
                 input  logic        writeEnableAC, writeEnableR, writeEnableMem, // enables for R, AC, and memory
                 input  logic        PCEnable, instructionRegisterEnable, MSBaddressEnable, LSBaddressEnable, zeroEnable, // enables for other registers
-                input  logic        muxSelectPC, muxSelectAddress, muxSelectALUtoAC, muxSelectMEM_or_R_toAC,  // mux selectlines
+                // added muxOpcode
+                input  logic        muxOpcode, muxSelectPC, muxSelectAddress, muxSelectALUtoAC, muxSelectMEM_or_R_toAC,  // mux selectlines
                 input  logic [15:0] dataAddress, // for testbench, is the data Address we are trying to read from
                 output logic [7:0]  dataValue,   // for testbench, is the dataValue from address we read from
                 output logic [7:0]  opcode,   // opcode to be sent to the control unit (read from memory)
@@ -13,6 +14,8 @@ module datapath(input  logic        clk, reset, // input clock and reset signals
   logic [7:0]  readDataAC, writeDataAC, readDataR, readDataMEM, aluResult, MEM_or_R_toAC; // all intermediary 8 bit busses to do with AC, R, ALU, and MEM
   logic [15:0] PCplus1, PCin, PCout, addressIn, fullAddress; // all intermediary 16 bit busses to do with PC and MEM addresses
   logic [7:0]  MSBOut, LSBOut;  //all intermediary 8 bit busses to do with registers connected to MEM
+  // added wire for output of IR 
+  logic [7:0]  regOpcode;
 
 
 // stuff for the PC 
@@ -24,8 +27,10 @@ module datapath(input  logic        clk, reset, // input clock and reset signals
 // stuff for main MEM and instruction/data/address registers
   mux2 #(16) write_to_address(PCout, fullAddress, muxSelectAddress, addressIn); //multiplexer for choosing between the fullAddress read in from memory, or the current value of PC
   memory MEM (clk, addressIn, readDataAC, writeEnableMem, dataAddress, dataValue, readDataMEM); //instantiation of module to hold instruction and data memory
-  register_Enablable #(8) instructionRegister (clk, reset, instructionRegisterEnable, readDataMEM, opcode); // instruction register that reads in from MEM and holds opcode of current instruction
-  
+  register_Enablable #(8) instructionRegister (clk, reset, instructionRegisterEnable, readDataMEM, regOpcode); // instruction register that reads in from MEM and holds opcode of current instruction
+  // added mux for selecting between opcode and output of memory
+  mux2 #(8) instructionOpcode(regOpcode, readDataMEM, muxOpcode, opcode);
+
   register_Enablable #(8) MSBaddressRegister  (clk, reset, MSBaddressEnable,          readDataMEM, MSBOut); // MSB address register that reads in from MEM when a Gamma instruction is used
   register_Enablable #(8) LSBaddressRegister  (clk, reset, LSBaddressEnable,          readDataMEM, LSBOut); // LSB address register that reads in from MEM when a Gamma instruction is used
   assign fullAddress = {MSBOut, LSBOut}; // the full address is the concatination of the MSB and LSB register outputs
